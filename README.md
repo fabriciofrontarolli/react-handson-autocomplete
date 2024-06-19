@@ -2,6 +2,10 @@
 
 ![Liquidity Home Assignment](https://i.imgur.com/50P26sF.png)
 
+## Running the project
+
+Run `npm start` in the root folder of the project.
+
 ## Requirements
 
 ### Search Page
