@@ -1,26 +1,29 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { debounce } from 'lodash';
+import { Character } from '../types/character';
 
-const Search = () => {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState({});
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+const Search = (): JSX.Element => {
+  const [query, setQuery] = useState<string>('');
+  const [results, setResults] = useState<object>({});
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate: NavigateFunction = useNavigate();
 
-  const fetchResults = async (query) => {
+  const fetchResults: (query: string) => Promise<void> = async (query: string): Promise<void> => {
     setLoading(true);
+
     try {
-      const endpoints = ['people', 'films', 'starships', 'vehicles', 'species', 'planets'];
-      const promises = endpoints.map((endpoint) =>
+      const endpoints: Array<string> = ['people', 'films', 'starships', 'vehicles', 'species', 'planets'];
+      const promises: Array<Promise<any>> = endpoints.map((endpoint) =>
         axios.get(`https://swapi.dev/api/${endpoint}?search=${query}`)
       );
-      const responses = await Promise.all(promises);
-      const data = responses.reduce((acc, response, index) => {
+      const responses: Array<any> = await Promise.all(promises);
+      const data: Array<Character> = responses.reduce((acc, response, index) => {
         acc[endpoints[index]] = response.data.results.slice(0, 3); // Top 3 results per category
         return acc;
       }, {});
+
       setResults(data);
     } catch (error) {
       console.error('Error fetching results:', error);
@@ -29,7 +32,7 @@ const Search = () => {
     }
   };
 
-  const debouncedFetchResults = useCallback(debounce(fetchResults, 200), []);
+  const debouncedFetchResults: any = useCallback(debounce(fetchResults, 200), []);
 
   useEffect(() => {
     if (query.length > 0) {
@@ -39,11 +42,11 @@ const Search = () => {
     }
   }, [query, debouncedFetchResults]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
   };
 
-  const handleViewAll = (category) => {
+  const handleViewAll = (category: string) => {
     if (category === 'people') {
       navigate('/characters');
     } else {

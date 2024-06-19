@@ -8,7 +8,7 @@ import './styles/App.scss';
 import './styles/Search.scss';
 import './styles/CharactersList.scss';
 
-function App() {
+function App(): JSX.Element {
   return (
     <Router>
       <div className="App">

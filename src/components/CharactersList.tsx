@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import '../styles/CharactersList.scss';
+import { Character } from '../types/character';
 
-const CharactersList = () => {
-  const [characters, setCharacters] = useState([]);
-  const [view, setView] = useState('list');
-  const [page, setPage] = useState(1);
+const CharactersList = (): JSX.Element => {
+  const [characters, setCharacters] = useState<Array<Character>>([]);
+  const [view, setView] = useState<'list' | 'grid'>('list');
+  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
-    const fetchCharacters = async () => {
+    const fetchCharacters: () => Promise<void> = async () => {
       try {
-        const response = await axios.get(`https://swapi.dev/api/people/?page=${page}&size=20`);
+        const response: AxiosResponse<any,any> = await axios.get(`https://swapi.dev/api/people/?page=${page}&size=20`);
         setCharacters((prev) => [...prev, ...response.data.results]);
       } catch (error) {
         console.error('Error fetching characters:', error);
@@ -24,15 +25,15 @@ const CharactersList = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = (index: number) => {
     setCharacters((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleEdit = (index) => {
-    const character = characters[index];
-    const newName = prompt(`Enter new name for ${character.name}:`, character.name);
-    const newGender = prompt(`Enter new gender for ${character.name}:`, character.gender);
-    const newBirthYear = prompt(`Enter new birth year for ${character.name}:`, character.birth_year);
+  const handleEdit = (index: number) => {
+    const character: Character = characters[index];
+    const newName: string = prompt(`Enter new name for ${character.name}:`, character.name);
+    const newGender: string = prompt(`Enter new gender for ${character.name}:`, character.gender);
+    const newBirthYear: string = prompt(`Enter new birth year for ${character.birth_year}:`, character.birth_year);
 
     setCharacters((prev) =>
       prev.map((char, i) =>
@@ -83,29 +84,3 @@ const CharactersList = () => {
 };
 
 export default CharactersList;
-
-
-/*
-<table>
-  <thead>
-    <th>Name</th>
-    <th>Gender</th>
-    <th>Birth Year</th>
-    <th>Edit</th>
-    <th>Delete</th>
-  </thead>
-  <tbody>
-    {
-      characters.map((character, index) => (
-        <tr>
-          <td>{character.name}</td>
-          <td>{character.gender}</td>
-          <td>{character.birth_year}</td>
-          <td><button onClick={() => handleEdit(index)}>Edit</button></td>
-          <td><button onClick={() => handleDelete(index)}>Delete</button></td>
-        </tr>
-      ))
-    }
-  </tbody>
-</table>
-*/
